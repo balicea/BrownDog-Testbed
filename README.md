@@ -11,8 +11,7 @@ The Testbed is currently running parallel tests from a single server, but there 
 
 ##Technologies
 
-* Spring DI
-* MongoDB
-* JAX-RS
-* JQuery + JSON services
-* D3 visualizations
+* Spring dependency injection
+* Jargon iRODS client, Apache http client
+* MongoDB used for data profile, test results and queuing
+* JAX-RS controllers with UI in JQuery and D3
