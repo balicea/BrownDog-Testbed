@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.irods.jargon</groupId>
 			<artifactId>jargon-core</artifactId>
-			<version>3.2.0</version>
+			<version>3.3.0</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>

@@ -44,7 +44,7 @@
 		<constructor-arg value="${mongodb.db:ciber-testbed}"/>
 	</bean>
 	
-	<bean id="irodsAccount"  class="org.irods.jargon.core.connection.IRODSAccount">
+	<bean id="irodsAccount" class="org.irods.jargon.core.connection.IRODSAccount">
 		<constructor-arg value="${irods.host}"/>
 		<constructor-arg type="int" value="${irods.port}"/>
 		<constructor-arg value="${irods.username}"/>
@@ -56,7 +56,9 @@
 	
 	<bean id="irodsFileSystem"  class="org.irods.jargon.core.pub.IRODSFileSystem" factory-method="instance"/>
 
-	<bean id="dataProvider" class="bd.ciber.testbed.IrodsDataProvider"/>
+	<bean id="dataProvider" class="bd.ciber.testbed.IrodsDataProvider">
+		<property name="basePath" value="${dataprovider.base.path:/}"/>
+	</bean>
 	
 	<bean id="testbedService" class="bd.ciber.testbed.TestbedService"/>
 	
