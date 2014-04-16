@@ -3,21 +3,42 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>bd.ciber</groupId>
 	<artifactId>testbed</artifactId>
-	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>testbed Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<name>CI-BER BrownDog Testbed</name>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.0.1.RELEASE</version>
+	</parent>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+		<!-- end::jetty[] -->
+		<!-- tag::actuator[] -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>2.12.0-rc1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.irods.jargon</groupId>
@@ -39,120 +60,76 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>4.0.2.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
-    <dependency>
-    	<groupId>org.glassfish.jersey.media</groupId>
-    	<artifactId>jersey-media-json-jackson</artifactId>
-    	<version>2.7</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-test</artifactId>
-    	<version>4.0.2.RELEASE</version>
-    	<exclusions>
-    		<exclusion>
-    			<artifactId>spring-core</artifactId>
-    			<groupId>org.springframework</groupId>
-    		</exclusion>
-    	</exclusions>
-    </dependency>
-    <dependency>
-    	<groupId>org.glassfish.jersey.ext</groupId>
-    	<artifactId>jersey-spring3</artifactId>
-    	<version>2.7</version>
-    	<exclusions>
-    		<exclusion>
-    			<artifactId>spring-core</artifactId>
-    			<groupId>org.springframework</groupId>
-    		</exclusion>
-    		<exclusion>
-    			<artifactId>spring-web</artifactId>
-    			<groupId>org.springframework</groupId>
-    		</exclusion>
-    		<exclusion>
-    			<artifactId>spring-beans</artifactId>
-    			<groupId>org.springframework</groupId>
-    		</exclusion>
-    	</exclusions>
-    </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-web</artifactId>
-    	<version>4.0.2.RELEASE</version>
-<!--     	<exclusions>
-    		<exclusion>
-    			<artifactId>commons-logging</artifactId>
-    			<groupId>commons-logging</groupId>
-    		</exclusion>
-    	</exclusions> -->
-    </dependency>
-    <dependency>
-    	<groupId>org.slf4j</groupId>
-    	<artifactId>slf4j-api</artifactId>
-    	<version>1.7.6</version>
-    </dependency>
-     <dependency>
-	  <groupId>ch.qos.logback</groupId>
-	  <artifactId>logback-classic</artifactId>
-	  <version>1.1.1</version>
-	 </dependency>	 
-	 <dependency>
-	  <groupId>ch.qos.logback</groupId>
-	  <artifactId>logback-core</artifactId>
-	  <version>1.1.1</version>
-	 </dependency>
-	 <dependency>
-	 	<groupId>org.apache.httpcomponents</groupId>
-	 	<artifactId>httpclient</artifactId>
-	 	<version>4.3.3</version>
-	 </dependency>
-	 <dependency>
-	 	<groupId>org.apache.httpcomponents</groupId>
-	 	<artifactId>httpmime</artifactId>
-	 	<version>4.3.3</version>
-	 </dependency>
-	 <dependency>
-	 	<groupId>org.mockito</groupId>
-	 	<artifactId>mockito-all</artifactId>
-	 	<version>1.9.5</version>
-	 	<scope>test</scope>
-	 </dependency>
-	 <dependency>
-	 	<groupId>org.mongojack</groupId>
-	 	<artifactId>mongojack</artifactId>
-	 	<version>2.0.0</version>
-	 </dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mongojack</groupId>
+			<artifactId>mongojack</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-daemon</groupId>
+			<artifactId>commons-daemon</artifactId>
+			<version>1.0.15</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
 	</dependencies>
-  <build>
-    <finalName>testbed</finalName>
-	<plugins>
-        <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>1.7</source>
-                <target>1.7</target>
-            </configuration>
-        </plugin>
-    </plugins>
-  </build>
-  <repositories>
-    <repository>
-      <id>renci-releases</id>
-	  <name>RENCI Maven repository</name>
-	  <url>http://ci-dev.renci.org/nexus/content/repositories/releases/</url>
-    </repository>
-  </repositories>
+	<properties>
+		<start-class>bd.ciber.testbed.Testbed</start-class>
+	</properties>
+	<build>
+		<finalName>testbed</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>renci-releases</id>
+			<name>RENCI Maven repository</name>
+			<url>http://ci-dev.renci.org/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 </project>

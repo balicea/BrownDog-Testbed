@@ -1,26 +1,23 @@
 package bd.ciber.testbed;
 
 import static org.mongojack.JacksonDBCollection.wrap;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import org.mongojack.JacksonDBCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import bd.ciber.testbed.db.DataProfile;
 import bd.ciber.testbed.db.PolyglotTestResult;
@@ -29,11 +26,9 @@ import bd.ciber.testbed.db.TestBatchResult;
 
 import com.mongodb.DB;
 
-@Component
-@Scope("prototype")
-@Path("/rest")
-public class Controller {
-	private static final Logger LOG = LoggerFactory.getLogger(Controller.class);
+@Controller
+public class TestbedController {
+	private static final Logger LOG = LoggerFactory.getLogger(TestbedController.class);
 	
 	@Autowired
 	private DB db;
@@ -43,6 +38,9 @@ public class Controller {
 	private JacksonDBCollection<TestBatchResult, String> testBatchResultColl;
 	private JacksonDBCollection<PolyglotTestResult, String> polyglotTestResultColl;
 
+	@Autowired
+	private TestbedService testbedService;
+
 	@PostConstruct
 	public void init() {
 		dataProfileColl = wrap(db.getCollection(DataProfile.class.getName()), DataProfile.class, String.class);
@@ -51,65 +49,47 @@ public class Controller {
 		polyglotTestResultColl = wrap(db.getCollection(PolyglotTestResult.class.getName()), PolyglotTestResult.class, String.class);
 	}
 
-	@Path("/DataProfile")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public String postDataProfile(@RequestBody DataProfile profile) {
+	@RequestMapping(value="/DataProfile", method=PUT)
+	public @ResponseBody String postDataProfile(@RequestBody DataProfile profile) {
 		return dataProfileColl.insert(profile).getSavedId();
 	}
 
-	@Path("/DataProfile")
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public DataProfile getDataProfile(@QueryParam("id") String id) {
+	@RequestMapping(value="/DataProfile", method=GET)
+	public @ResponseBody DataProfile getDataProfile(@RequestParam("id") String id) {
 		return dataProfileColl.findOneById(id);
 	}
 	
-	@Path("/PolyglotTestResult")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public String postPolyglotTestResult(@RequestBody PolyglotTestResult polyglotTestResult) {
+	@RequestMapping(value="/PolyglotTestResult", method=PUT)
+	public @ResponseBody String postPolyglotTestResult(@RequestBody PolyglotTestResult polyglotTestResult) {
 		return polyglotTestResultColl.insert(polyglotTestResult).getSavedId();
 	}
 
-	@Path("/PolyglotTestResult")
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public PolyglotTestResult getPolyglotTestResult(@QueryParam("id") String id) {
+	@RequestMapping(value="/PolyglotTestResult", method=GET)
+	public @ResponseBody PolyglotTestResult getPolyglotTestResult(@RequestParam("id") String id) {
 		return polyglotTestResultColl.findOneById(id);
 	}
-	
-	@Path("/TestBatchResult")
-	@PUT
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public String putTestBatchResult(@RequestBody TestBatchResult testBatchResult) {
+
+	@RequestMapping(value="/TestBatchResult", method=PUT)
+	public @ResponseBody String putTestBatchResult(@RequestBody TestBatchResult testBatchResult) {
 		return testBatchResultColl.insert(testBatchResult).getSavedId();
 	}
 	
-	@Path("/TestBatchResult/{id}")
-	@POST
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public void postTestBatchResult(@PathVariable String id, @RequestBody TestBatchResult testBatchResult) {
+	@RequestMapping(value="/TestBatchResult/{id}", method=POST)
+	public void postTestBatchResult(@PathVariable("id") String id, @RequestBody TestBatchResult testBatchResult) {
 		testBatchResultColl.updateById(id, testBatchResult);
 	}
 
-	@Path("/TestBatchResult")
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public TestBatchResult getTestBatchResult(@QueryParam("id") String id) {
+	@RequestMapping(value="/TestBatchResult/{id}", method=GET)
+	public @ResponseBody TestBatchResult getTestBatchResult(@PathVariable("id") String id) {
 		return testBatchResultColl.findOneById(id);
 	}
-	
-	@Path("/Settings")
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Settings getSettings() {
+
+	@RequestMapping(value="/Settings", method=GET)
+	public @ResponseBody Settings getSettings() {
 		return settingsColl.findOne();
 	}
 	
-	@Path("/Settings")
-	@POST
-	@Consumes({ MediaType.APPLICATION_JSON })
+	@RequestMapping(value="/Settings", method=POST)
 	public void updateSettings(@RequestBody Settings settings) {
 		Settings existing = settingsColl.findOne();
 		LOG.debug("found settings {}", existing);

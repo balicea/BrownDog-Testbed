@@ -3,54 +3,34 @@ package bd.ciber.testbed;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import bd.ciber.testbed.db.DataProfile;
 import bd.ciber.testbed.db.Settings;
 import bd.ciber.testbed.db.TestBatchResult;
 
-import com.mongodb.DB;
-
+@Component
 public class TestbedService implements ApplicationContextAware {
 	private static final Logger LOG = LoggerFactory.getLogger(TestbedService.class);
 
-	private Timer timer = new Timer();
-	private boolean running = false;
-	
-	@Autowired(required = false)
-	private boolean autostart = false;
+	private Timer timer = null;
 	
 	@Autowired
-	DB db;
-	
-	@Autowired
-	private Controller controller;
+	private TestbedController controller;
 
 	private ApplicationContext applicationContext;
-
-	@PostConstruct
-	public void init() {
-		if(autostart) start();
-	}
-	
-	/**
-	 * Stop running tests after this batch.
-	 */
-	public synchronized void shutdown() {
-		timer.cancel();
-		this.running = false;
-		timer.purge();
-	}
 	
 	public synchronized void start() {
-		if(this.running) return;
+		if(timer != null) {
+			throw new Error("Testbed service already started");
+		}
+		timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -70,7 +50,12 @@ public class TestbedService implements ApplicationContextAware {
 				}
 			}
 		}, 1000, 1000*60);
-		this.running = true;
+	}
+
+	public void stop() throws Exception {
+		timer.cancel();
+		timer.purge();
+		timer = null;
 	}
 
 	@Override

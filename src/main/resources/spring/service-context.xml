@@ -14,7 +14,7 @@
 		factory-method="getProperty">
 		<constructor-arg index="0" value="server.properties.uri" />
 		<!-- property name for properties URI location -->
-		<constructor-arg index="1" value="classpath:service.properties" />
+		<constructor-arg index="1" value="classpath:/service.properties" />
 		<!-- default location for testing -->
 	</bean>
 	<bean id="serverProperties"
@@ -26,6 +26,9 @@
 		</property>
 		<property name="ignoreResourceNotFound" value="false" />
 	</bean>
+	
+	<context:annotation-config/>
+	<context:component-scan base-package="bd.ciber.testbed"/>
 	
 	<bean id="polyglotClient" class="bd.ciber.testbed.PolyglotClient">
 		<property name="hostname" value="${dap.host}"/>
@@ -53,20 +56,9 @@
 		<constructor-arg value="${irods.zone}"/>
 		<constructor-arg value="${irods.resource}"/>
 	</bean>
-	
-	<bean id="irodsFileSystem"  class="org.irods.jargon.core.pub.IRODSFileSystem" factory-method="instance"/>
 
-	<bean id="dataProvider" class="bd.ciber.testbed.IrodsDataProvider">
+	<bean id="irodsDataProvider" class="bd.ciber.testbed.IrodsDataProvider">
 		<property name="basePath" value="${dataprovider.base.path:/}"/>
-	</bean>
-	
-	<bean id="testbedService" class="bd.ciber.testbed.TestbedService"/>
-	
-	<bean id="controller" class="bd.ciber.testbed.Controller"/>
-	
-	<bean id="testBatchRunner" class="bd.ciber.testbed.TestBatchRunner" scope="prototype">
-		<property name="controller" ref="controller"/>
-		<property name="dataProvider" ref="dataProvider"/>
 	</bean>
 
 </beans>

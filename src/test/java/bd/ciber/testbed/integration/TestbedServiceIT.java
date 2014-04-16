@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import bd.ciber.testbed.Controller;
+import bd.ciber.testbed.TestbedController;
 import bd.ciber.testbed.TestbedService;
 import bd.ciber.testbed.db.DataProfile;
 import bd.ciber.testbed.db.Settings;
@@ -20,14 +20,13 @@ import bd.ciber.testbed.db.Settings;
 public class TestbedServiceIT {
 	private static final Logger LOG = LoggerFactory.getLogger(TestbedServiceIT.class);
 	
-	@Autowired
-	private TestbedService testbedService;
+	private static TestbedService testbedService;
 	
 	@Autowired
-	private Controller controller;
+	private TestbedController controller;
 
 	@Test
-	public void testAll() throws InterruptedException {
+	public void testAll() throws Exception {
 		controller.dropAll();
 		DataProfile dataProfile = new DataProfile();
 		dataProfile.setName("integrationTest1");
@@ -45,7 +44,7 @@ public class TestbedServiceIT {
 		LOG.debug("stored settings");
 		testbedService.start();
 		Thread.sleep(1000*60);
-		testbedService.shutdown();
+		testbedService.stop();
 		Thread.sleep(1000*60*30);
 	}
 

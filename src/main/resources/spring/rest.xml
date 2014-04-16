@@ -10,5 +10,5 @@
         as well as some utility gear. -->
     <context:annotation-config/>
     <context:component-scan
-        base-package="bd.ciber.testbed,bd.ciber.testbed.pojos"/>
+        base-package="bd.ciber.testbed,bd.ciber.testbed.db"/>
 </beans>

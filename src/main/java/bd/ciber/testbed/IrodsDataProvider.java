@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 public class IrodsDataProvider implements DataProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(IrodsDataProvider.class);
 	
-	@Autowired
 	private IRODSFileSystem irodsFileSystem;
 	
 	@Autowired
@@ -53,6 +52,7 @@ public class IrodsDataProvider implements DataProvider {
 	@PostConstruct
 	public void init() {
 		try {
+			irodsFileSystem = IRODSFileSystem.instance();
             JargonProperties origProps = irodsFileSystem.getIrodsSession().getJargonProperties();
             SettableJargonProperties overrideJargonProperties = new SettableJargonProperties(origProps);
             //overrideJargonProperties.setIrodsSocketTimeout(irodsSocketTimeout); // was 300

@@ -16,11 +16,15 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import bd.ciber.testbed.db.DataProfile;
 import bd.ciber.testbed.db.PolyglotTestResult;
 import bd.ciber.testbed.db.TestBatchResult;
 
+@Component
+@Scope("prototype")
 public class TestBatchRunner implements Callable<TestBatchResult>, ApplicationContextAware {
 	private static final Logger LOG = LoggerFactory.getLogger(TestBatchRunner.class); 
 	
@@ -28,7 +32,7 @@ public class TestBatchRunner implements Callable<TestBatchResult>, ApplicationCo
 	private DataProvider dataProvider;
 	
 	@Autowired
-	private Controller controller;
+	private TestbedController controller;
 	
 	private DataProfile profile;
 	
@@ -75,11 +79,11 @@ public class TestBatchRunner implements Callable<TestBatchResult>, ApplicationCo
 		this.dataProvider = dataProvider;
 	}
 
-	public Controller getController() {
+	public TestbedController getController() {
 		return controller;
 	}
 
-	public void setController(Controller controller) {
+	public void setController(TestbedController controller) {
 		this.controller = controller;
 	}
 

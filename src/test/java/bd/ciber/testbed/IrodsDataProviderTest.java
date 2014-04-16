@@ -22,7 +22,7 @@ public class IrodsDataProviderTest {
 	private static final Logger LOG = LoggerFactory.getLogger(IrodsDataProviderTest.class);
 	
 	@Autowired
-	DataProvider irodsDataProvider;
+	IrodsDataProvider irodsDataProvider;
 
 	@Test
 	public void test() throws JargonException, IOException {
