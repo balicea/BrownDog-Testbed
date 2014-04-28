@@ -5,8 +5,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import javax.annotation.PostConstruct;
-
 import org.mongojack.JacksonDBCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,77 +30,90 @@ public class TestbedController {
 	@Autowired
 	private DB db;
 
-	private JacksonDBCollection<DataProfile, String> dataProfileColl;
-	private JacksonDBCollection<Settings, String> settingsColl;
-	private JacksonDBCollection<TestBatchResult, String> testBatchResultColl;
-	private JacksonDBCollection<PolyglotTestResult, String> polyglotTestResultColl;
+	private JacksonDBCollection<DataProfile, String> getDataProfileColl() {
+		return wrap(db.getCollection(DataProfile.class.getName()), DataProfile.class, String.class);
+	}
+	private JacksonDBCollection<Settings, String> getSettingsColl() {
+		return wrap(db.getCollection(Settings.class.getName()), Settings.class, String.class);
+	}
+	private JacksonDBCollection<TestBatchResult, String> getTestBatchResultColl() {
+		return wrap(db.getCollection(TestBatchResult.class.getName()), TestBatchResult.class, String.class);
+	}
+	private JacksonDBCollection<PolyglotTestResult, String> getPolyglotTestResultColl() {
+		return wrap(db.getCollection(PolyglotTestResult.class.getName()), PolyglotTestResult.class, String.class);
+	}
 
 	@Autowired
 	private TestbedService testbedService;
 
-	@PostConstruct
-	public void init() {
-		dataProfileColl = wrap(db.getCollection(DataProfile.class.getName()), DataProfile.class, String.class);
-		settingsColl = wrap(db.getCollection(Settings.class.getName()), Settings.class, String.class);
-		testBatchResultColl = wrap(db.getCollection(TestBatchResult.class.getName()), TestBatchResult.class, String.class);
-		polyglotTestResultColl = wrap(db.getCollection(PolyglotTestResult.class.getName()), PolyglotTestResult.class, String.class);
-	}
-
 	@RequestMapping(value="/DataProfile", method=PUT)
 	public @ResponseBody String postDataProfile(@RequestBody DataProfile profile) {
-		return dataProfileColl.insert(profile).getSavedId();
+		return getDataProfileColl().insert(profile).getSavedId();
 	}
 
-	@RequestMapping(value="/DataProfile", method=GET)
-	public @ResponseBody DataProfile getDataProfile(@RequestParam("id") String id) {
-		return dataProfileColl.findOneById(id);
+	@RequestMapping(value="/DataProfile/{id}", method=GET)
+	public @ResponseBody DataProfile getDataProfile(@PathVariable("id") String id) {
+		return getDataProfileColl().findOneById(id);
 	}
 	
 	@RequestMapping(value="/PolyglotTestResult", method=PUT)
 	public @ResponseBody String postPolyglotTestResult(@RequestBody PolyglotTestResult polyglotTestResult) {
-		return polyglotTestResultColl.insert(polyglotTestResult).getSavedId();
+		return getPolyglotTestResultColl().insert(polyglotTestResult).getSavedId();
 	}
 
-	@RequestMapping(value="/PolyglotTestResult", method=GET)
-	public @ResponseBody PolyglotTestResult getPolyglotTestResult(@RequestParam("id") String id) {
-		return polyglotTestResultColl.findOneById(id);
+	@RequestMapping(value="/PolyglotTestResult/{id}", method=GET)
+	public @ResponseBody PolyglotTestResult getPolyglotTestResult(@PathVariable("id") String id) {
+		return getPolyglotTestResultColl().findOneById(id);
 	}
 
 	@RequestMapping(value="/TestBatchResult", method=PUT)
 	public @ResponseBody String putTestBatchResult(@RequestBody TestBatchResult testBatchResult) {
-		return testBatchResultColl.insert(testBatchResult).getSavedId();
+		return getTestBatchResultColl().insert(testBatchResult).getSavedId();
 	}
 	
 	@RequestMapping(value="/TestBatchResult/{id}", method=POST)
 	public void postTestBatchResult(@PathVariable("id") String id, @RequestBody TestBatchResult testBatchResult) {
-		testBatchResultColl.updateById(id, testBatchResult);
+		getTestBatchResultColl().updateById(id, testBatchResult);
 	}
 
 	@RequestMapping(value="/TestBatchResult/{id}", method=GET)
 	public @ResponseBody TestBatchResult getTestBatchResult(@PathVariable("id") String id) {
-		return testBatchResultColl.findOneById(id);
+		return getTestBatchResultColl().findOneById(id);
 	}
 
 	@RequestMapping(value="/Settings", method=GET)
 	public @ResponseBody Settings getSettings() {
-		return settingsColl.findOne();
+		return getSettingsColl().findOne();
 	}
 	
 	@RequestMapping(value="/Settings", method=POST)
 	public void updateSettings(@RequestBody Settings settings) {
-		Settings existing = settingsColl.findOne();
+		Settings existing = getSettingsColl().findOne();
 		LOG.debug("found settings {}", existing);
 		if(existing != null) {
-			settingsColl.updateById(existing.getId(), settings);
+			getSettingsColl().updateById(existing.getId(), settings);
 		} else {
-			settingsColl.insert(settings);
+			getSettingsColl().insert(settings);
 		}
+	}
+	
+	@RequestMapping(value="/Service", method=GET)
+	public @ResponseBody String updateSettings(@RequestParam("action") String action) throws Exception {
+		LOG.info("Service action requested: {}", action);
+		if("start".equals(action)) {
+			this.testbedService.start();
+			return "starting";
+		} else if("stop".equals(action)) {
+			this.testbedService.stop();
+			return "stopping";
+		}
+		throw new Exception("unrecognized action");
 	}
 
 	public void dropAll() {
-		dataProfileColl.drop();
-		settingsColl.drop();
-		testBatchResultColl.drop();
-		polyglotTestResultColl.drop();
+		getDataProfileColl().drop();
+		getSettingsColl().drop();
+		getTestBatchResultColl().drop();
+		getPolyglotTestResultColl().drop();
 	}
 }

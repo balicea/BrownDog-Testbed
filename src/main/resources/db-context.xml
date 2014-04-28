@@ -1,32 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jms="http://www.springframework.org/schema/jms"
-	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
-		http://www.springframework.org/schema/util 
-		http://www.springframework.org/schema/util/spring-util.xsd
-		http://www.springframework.org/schema/context 
-		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-
-	<bean name="propertiesURI" class="java.lang.System"
-		factory-method="getProperty">
-		<constructor-arg index="0" value="server.properties.uri" />
-		<!-- property name for properties URI location -->
-		<constructor-arg index="1" value="classpath:service.properties" />
-		<!-- default location for testing -->
-	</bean>
-	<bean id="serverProperties"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<ref bean="propertiesURI" />
-			</list>
-		</property>
-		<property name="ignoreResourceNotFound" value="false" />
-	</bean>
-	
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	<context:property-placeholder location="classpath:service.properties"/>
 	<context:annotation-config/>
 	<context:component-scan base-package="bd.ciber.testbed"/>
 	
@@ -59,6 +38,7 @@
 
 	<bean id="irodsDataProvider" class="bd.ciber.testbed.IrodsDataProvider">
 		<property name="basePath" value="${dataprovider.base.path:/}"/>
+		<property name="irodsAccount" ref="irodsAccount"/>
 	</bean>
 
 </beans>

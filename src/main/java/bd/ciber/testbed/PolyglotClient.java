@@ -140,16 +140,18 @@ public class PolyglotClient {
 			post.setEntity(reqEntity);
 			CloseableHttpResponse response = httpclient.execute(post);
 			if(response.getEntity().isStreaming()) {
+				LOG.info("result is streaming");
 				File temp = File.createTempFile("output", "."+destinationFormat);
 				OutputStream out = FileUtils.openOutputStream(temp);
 				StreamUtils.copy(response.getEntity().getContent(), out);
 				result = temp.getAbsolutePath();
 			} else {
+				LOG.info("result is NOT streaming");
 				result = response.getEntity().toString();
 			}
 			LOG.info(post.getRequestLine() + " got response: "
 						+ response.getStatusLine());
-			LOG.info("response body: {}", result);
+			//LOG.info("response body: {}", result);
 		} catch (ParseException | IOException e) {
 			// TODO interpret exception for caller
 			LOG.error("Error", e);

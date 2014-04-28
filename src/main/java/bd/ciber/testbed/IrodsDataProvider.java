@@ -26,19 +26,14 @@ import org.irods.jargon.core.query.QueryConditionOperators;
 import org.irods.jargon.core.query.RodsGenQueryEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class IrodsDataProvider implements DataProvider {
 	private static final Logger LOG = LoggerFactory.getLogger(IrodsDataProvider.class);
 	
 	private IRODSFileSystem irodsFileSystem;
 	
-	@Autowired
 	private IRODSAccount irodsAccount;
 	
-	@Autowired
 	private String basePath;
 
 	public String getBasePath() {
@@ -127,6 +122,14 @@ public class IrodsDataProvider implements DataProvider {
 		} catch(JargonException e) {
 			throw new IOException(e);
 		}
+	}
+
+	public IRODSAccount getIrodsAccount() {
+		return irodsAccount;
+	}
+
+	public void setIrodsAccount(IRODSAccount irodsAccount) {
+		this.irodsAccount = irodsAccount;
 	}
 
 	@Override

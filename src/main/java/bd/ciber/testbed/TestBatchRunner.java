@@ -56,7 +56,7 @@ public class TestBatchRunner implements Callable<TestBatchResult>, ApplicationCo
 		LOG.debug("format spec is {}", profile.getFormatSpec());
 		Set<String> paths = dataProvider.select(profile.getFormatSpec());
 		this.totalTests = paths.size();
-		LOG.info("Starting test profile '{}' with {} files", profile.getName(), totalTests);
+		LOG.info("Starting test profile '{}' with {} files and {} threads", profile.getName(), totalTests, profile.getThreads());
 		final List<Future<PolyglotTestResult>> futures = new ArrayList<Future<PolyglotTestResult>>();
 		result.setStartTime(System.currentTimeMillis());
 		String id = controller.putTestBatchResult(result);

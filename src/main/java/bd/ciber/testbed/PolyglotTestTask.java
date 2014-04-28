@@ -11,9 +11,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import bd.ciber.testbed.db.PolyglotTestResult;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PolyglotTestTask implements Callable<PolyglotTestResult> {
 	private static final Logger LOG = LoggerFactory.getLogger(PolyglotTestTask.class);
 	String path;
@@ -60,6 +65,10 @@ public class PolyglotTestTask implements Callable<PolyglotTestResult> {
 	    	return result;
 		} catch (IOException e) {
 			result.setReturnCode(PolyglotTestResult.INPUT_DATA_ERROR);
+			result.setReturnMessage(e.getLocalizedMessage());
+			return result;
+		} catch(Exception e) {
+			result.setReturnCode(PolyglotTestResult.UNKNOWN_FAILURE);
 			result.setReturnMessage(e.getLocalizedMessage());
 			return result;
 		}
