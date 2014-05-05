@@ -5,6 +5,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.List;
+import java.util.Map;
+
 import org.mongojack.JacksonDBCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +24,11 @@ import bd.ciber.testbed.db.PolyglotTestResult;
 import bd.ciber.testbed.db.Settings;
 import bd.ciber.testbed.db.TestBatchResult;
 
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBObject;
+import com.mongodb.GroupCommand;
 
 @Controller
 public class TestbedController {
@@ -60,10 +67,35 @@ public class TestbedController {
 	public @ResponseBody String postPolyglotTestResult(@RequestBody PolyglotTestResult polyglotTestResult) {
 		return getPolyglotTestResultColl().insert(polyglotTestResult).getSavedId();
 	}
+	
+	@RequestMapping(value="/PolyglotTestResult", method=GET)
+	public @ResponseBody List<PolyglotTestResult> postPolyglotTestResult() {
+		return getPolyglotTestResultColl().find().sort(new BasicDBObject("_id", -1)).limit(50).toArray();
+	}
 
 	@RequestMapping(value="/PolyglotTestResult/{id}", method=GET)
 	public @ResponseBody PolyglotTestResult getPolyglotTestResult(@PathVariable("id") String id) {
 		return getPolyglotTestResultColl().findOneById(id);
+	}
+	
+	@RequestMapping(value="/PolyglotDistinctFormatsTested", method=GET)
+	public @ResponseBody Map<String, Integer> getPolyglotDistinctFormatsTested() {
+		DBObject match = new BasicDBObject("$match", new BasicDBObject("type", "airfare") );
+
+		// build the $projection operation
+		DBObject fields = new BasicDBObject("department", 1);
+		fields.put("amount", 1);
+		fields.put("_id", 0);
+		DBObject project = new BasicDBObject("$project", fields );
+
+		// Now the $group operation
+		DBObject groupFields = new BasicDBObject( "_id", "$department");
+		groupFields.put("average", new BasicDBObject( "$avg", "$amount"));
+		DBObject group = new BasicDBObject("$group", groupFields);
+
+		// run aggregation
+		AggregationOutput output = getPolyglotTestResultColl()..aggregate( match, project, group );
+		return getPolyglotTestResultColl().group(new GroupCommand(inputCollection, keys, condition, initial, reduce, finalize));
 	}
 
 	@RequestMapping(value="/TestBatchResult", method=PUT)
